@@ -2,265 +2,264 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Chatbot Lokal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chatbot Lokal dengan Virtual Keyboard</title>
   <style>
-    /* Reset dasar & font */
     body {
       margin: 0;
       font-family: sans-serif;
-      background-color: #fff;
-      color: #333;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
+      height: 100vh;
+      overflow: hidden;
     }
+    button { cursor: pointer; }
 
-    /* Kontrol atas */
     #controls {
-      padding: 1rem;
+      padding: .5rem;
       background: #f5f5f5;
       display: flex;
       justify-content: space-between;
-      align-items: center;
       border-bottom: 1px solid #ececec;
+      flex-shrink: 0;
     }
-    #controls button {
-      border: none;
-      background: none;
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
+    #controls button { background: none; border: none; font-size: 1rem; }
 
-    /* Container API key - default disembunyikan */
     #api-container {
       display: none;
-      padding: 1rem;
+      padding: .5rem;
       background: #fafafa;
       border-bottom: 1px solid #ececec;
+      flex-shrink: 0;
     }
     #api-container input {
       flex: 1;
-      padding: 0.5rem;
-      font-size: 1rem;
+      padding: .25rem;
+      font-size: .9rem;
       border: 1px solid #ccc;
       border-radius: 4px;
-      margin-right: 0.5rem;
+      margin-right: .5rem;
     }
     #api-container button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
+      padding: .25rem .5rem;
+      font-size: .9rem;
       border: 1px solid #ccc;
       border-radius: 4px;
       background: #eee;
-      cursor: pointer;
+      margin-left: .25rem;
     }
 
-    /* Chat container */
+    #content-wrap {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    #chat-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #ececec;
+      overflow: hidden;
+    }
+
     #chat-container {
       flex: 1;
-      padding: 1rem;
+      padding: .5rem;
       overflow-y: auto;
     }
-    .message {
-      margin-bottom: 1rem;
-      line-height: 1.5;
-    }
-    .user {
-      text-align: right;
-      color: #0066cc;
-    }
-    .bot {
-      text-align: left;
-      color: #333;
-    }
+    .message { margin-bottom: .5rem; line-height: 1.4; }
+    .user { text-align: right; color: #0066cc; }
+    .bot  { text-align: left;  color: #333; }
 
-    /* Form input chat */
-    #input-form {
-      display: flex;
-      padding: 1rem;
-      background: #f5f5f5;
-      border-top: 1px solid #ececec;
-    }
-    #input-form input {
-      flex: 1;
-      padding: 0.5rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    #input-form button {
-      padding: 0.5rem 1rem;
-      margin-left: 0.5rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      background: #eee;
-      cursor: pointer;
-    }
-
-    /* Error box */
     #error-box {
       display: none;
       color: #d9534f;
-      padding: 1rem;
+      padding: .5rem;
+      flex-shrink: 0;
+      border-top: 1px solid #ececec;
+    }
+
+    #input-form {
+      display: flex;
+      padding: .5rem;
+      background: #f5f5f5;
+      border-top: 1px solid #ececec;
+      flex-shrink: 0;
+    }
+    #input-form input {
+      flex: 1;
+      padding: .25rem;
+      font-size: .9rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    #input-form button[type="submit"] { display: none; }
+
+    /* ===== Keyboard Config Vars ===== */
+    :root {
+      /* Increase key width for better touch targets */
+      --key-w: 2rem;
+      --key-h: 3rem;
+      --char-font: clamp(.7rem, 1.2vw, 1rem);
+      --special-key-font: clamp(.8rem, 1.5vw, 1.1rem);
+    }
+
+    #keyboard-container {
+      display: flex;
+      flex-direction: row;
+      width: 33.333vh;
+      max-width: 160px;
+      background: #f9f9f9;
+      flex-shrink: 0;
+    }
+
+    #special-keys {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      flex: 1;
+      height: 100%;
+    }
+    #special-keys button.key {
+      flex: 1;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      font-size: var(--special-key-font);
+      border: 1px solid #ccc;
+      background: white;
+      width: 100%;
+    }
+
+    #keyboard {
+      display: grid;
+      grid-template-columns: repeat(2, var(--key-w));
+      grid-auto-rows: var(--key-h);
+      gap: .2rem;
+      overflow: auto;
+    }
+    button.key {
+      width: var(--key-w);
+      height: var(--key-h);
+      font-size: var(--char-font);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #ccc;
+      background: white;
+      user-select: none;
+      touch-action: manipulation;
     }
   </style>
 </head>
 <body>
   <div id="controls">
-    <button id="toggle-api-btn" title="Show/Hide API Key">🔑</button>
-    <button id="reset-btn" title="Reset Session">🔄</button>
+    <button id="toggle-api-btn">API</button>
+    <button id="reset-btn">Reset</button>
   </div>
-
   <div id="api-container">
     <input type="text" id="api-key" placeholder="API Key" />
     <button id="paste-btn">Paste</button>
     <button id="clear-btn">Clear</button>
   </div>
-
-  <div id="chat-container"></div>
-
-  <form id="input-form">
-    <input type="text" id="user-input" placeholder="Tulis pesan..." autocomplete="off" required />
-    <button type="submit">Kirim</button>
-  </form>
-
-  <div id="error-box"></div>
-
-  <!-- LZ-String untuk kompresi history -->
-  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+  <div id="content-wrap">
+    <div id="chat-section">
+      <div id="chat-container"></div>
+      <div id="error-box"></div>
+      <form id="input-form">
+        <input type="text" id="user-input" placeholder="Tulis pesan..." autocomplete="off" required />
+        <button type="submit"></button>
+      </form>
+    </div>
+    <div id="keyboard-container">
+      <div id="special-keys"></div>
+      <div id="keyboard"></div>
+    </div>
+  </div>
   <script>
-    const toggleApiBtn = document.getElementById('toggle-api-btn');
-    const apiContainer = document.getElementById('api-container');
-    const apiKeyInput = document.getElementById('api-key');
-    const pasteBtn = document.getElementById('paste-btn');
-    const clearBtn = document.getElementById('clear-btn');
-    const resetBtn = document.getElementById('reset-btn');
+    /* Chatbot Logic */
     const chatContainer = document.getElementById('chat-container');
     const inputForm = document.getElementById('input-form');
     const userInput = document.getElementById('user-input');
     const errorBox = document.getElementById('error-box');
+    const apiKeyInput = document.getElementById('api-key');
+    const toggleApiBtn = document.getElementById('toggle-api-btn');
+    const apiContainer = document.getElementById('api-container');
+    const pasteBtn = document.getElementById('paste-btn');
+    const clearBtn = document.getElementById('clear-btn');
 
     let history = [];
 
-    // Toggle tampilan API key tanpa animasi
-    toggleApiBtn.addEventListener('click', () => {
-      if (apiContainer.style.display === 'none' || apiContainer.style.display === '') {
-        apiContainer.style.display = 'flex';
-      } else {
-        apiContainer.style.display = 'none';
-      }
-    });
-
-    // Paste API key dari clipboard
-    pasteBtn.addEventListener('click', async () => {
-      try {
-        const text = await navigator.clipboard.readText();
-        apiKeyInput.value = text;
-      } catch (err) {
-        showError('Gagal membaca clipboard: ' + err);
-      }
-    });
-
-    // Clear API key
-    clearBtn.addEventListener('click', () => {
-      apiKeyInput.value = '';
-      hideError();
-    });
-
-    // Reset session history
-    resetBtn.addEventListener('click', () => {
-      localStorage.removeItem('chat_history');
-      history = [];
-      chatContainer.innerHTML = '';
-      hideError();
-    });
-
-    // Tampilkan pesan
-    function displayMessage(text, sender) {
-      const msg = document.createElement('div');
-      msg.classList.add('message', sender);
-      msg.textContent = text;
-      chatContainer.appendChild(msg);
+    function display(msg, cls) {
+      const d = document.createElement('div');
+      d.className = 'message ' + cls;
+      d.textContent = msg;
+      chatContainer.appendChild(d);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+    function showError(e) { errorBox.style.display = 'block'; errorBox.textContent = e; }
+    function hideError() { errorBox.style.display = 'none'; }
+    function clearApiKey() { apiKeyInput.value = ''; localStorage.removeItem('chatbot-api-key'); }
+    function saveApiKey(key) { localStorage.setItem('chatbot-api-key', key); }
 
-    // Tampilkan error
-    function showError(msg) {
-      errorBox.style.display = 'block';
-      errorBox.textContent = msg;
-    }
-    function hideError() {
-      errorBox.style.display = 'none';
-      errorBox.textContent = '';
-    }
-
-    // Muat history saat startup
-    window.addEventListener('load', () => {
-      const stored = localStorage.getItem('chat_history');
-      if (stored) {
-        try {
-          const decompressed = LZString.decompressFromUTF16(stored);
-          history = JSON.parse(decompressed);
-          history.forEach(item => displayMessage(item.text, item.sender));
-        } catch {
-          localStorage.removeItem('chat_history');
-          history = [];
-        }
-      }
-    });
-
-    // Simpan history
-    function saveHistory() {
-      try {
-        const compressed = LZString.compressToUTF16(JSON.stringify(history));
-        localStorage.setItem('chat_history', compressed);
-      } catch (err) {
-        console.warn('Gagal menyimpan history:', err);
-      }
-    }
-
-    // Submit pesan chat
     inputForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      hideError();
-      const msg = userInput.value.trim();
-      if (!msg) return;
+      e.preventDefault(); hideError();
+      const txt = userInput.value.trim(); if (!txt) return;
       const key = apiKeyInput.value.trim();
-      if (!key) {
-        showError('Masukkan API Key terlebih dahulu.');
-        return;
-      }
-
-      // Tampilkan pesan pengguna
-      displayMessage(msg, 'user');
-      history.push({ text: msg, sender: 'user' });
-      saveHistory();
-      userInput.value = '';
-
+      if (!key) { showError('Masukkan API Key terlebih dahulu.'); return; }
+      saveApiKey(key); display(txt, 'user'); history.push({ text: txt, sender: 'user' }); userInput.value = '';
       try {
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{ parts: [{ text: msg }] }]
-            })
-          }
+          { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: txt }] }] }) }
         );
-        if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+        if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
         const data = await res.json();
-        const reply = (data.candidates && data.candidates[0] && data.candidates[0].content)
-          || 'Tidak ada respons.';
-        displayMessage(reply, 'bot');
-        history.push({ text: reply, sender: 'bot' });
-        saveHistory();
-      } catch (err) {
-        showError('Error: ' + err.message);
-      }
+        const reply = data.candidates?.[0]?.content || 'Tidak ada respons.';
+        display(reply, 'bot'); history.push({ text: reply, sender: 'bot' });
+      } catch (err) { showError('Error: ' + err.message); }
     });
+
+    toggleApiBtn.onclick = () => { apiContainer.style.display = apiContainer.style.display === 'flex' ? 'none' : 'flex'; };
+    pasteBtn.onclick = async () => { try { const text = await navigator.clipboard.readText(); apiKeyInput.value = text; saveApiKey(text); } catch { showError('Clipboard gagal dibaca'); }};
+    clearBtn.onclick = clearApiKey;
+    apiKeyInput.value = localStorage.getItem('chatbot-api-key') || '';
+
+    /* Virtual Keyboard Logic */
+    (function() {
+      const specialKeys = ['backspace','space','enter'];
+      const pairs = [
+        ['a',':'],['b',']'],['c','['],['d',';'],['e','='],['g','"'],['i','|'],['j','<'],['k','\''],
+        ['l','>'],['m','{'],['o','/'],['q','-'],['t','+'],['u','_'],['w','}'],['z','?'],
+        ['0',')'],['1','!'],['2','^'],['3','@'],['4','&'],['5','#'],['6','*'],['7','$'],['8','('],['9','%'],['`','~']
+      ];
+      const specC = document.getElementById('special-keys');
+      const kbC = document.getElementById('keyboard');
+
+      specialKeys.forEach(type => {
+        const btn = document.createElement('button'); btn.className = 'key'; btn.id = type;
+        btn.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+        if (type === 'space') btn.dataset.main = ' ';
+        btn.addEventListener('click', () => {
+          if (type === 'backspace') userInput.value = userInput.value.slice(0, -1);
+          if (type === 'space') userInput.value += ' ';
+          if (type === 'enter') inputForm.requestSubmit();
+        }); specC.appendChild(btn);
+      });
+
+      pairs.forEach(([main, alt]) => {
+        const btn = document.createElement('button'); btn.className = 'key'; btn.textContent = `${main} ${alt}`;
+        btn.dataset.main = main; btn.dataset.alt = alt;
+        let timer;
+        btn.addEventListener('mousedown', () => { timer = setTimeout(() => { userInput.value += alt; timer = null; }, 500); });
+        btn.addEventListener('mouseup', () => { if (timer) { clearTimeout(timer); userInput.value += main; }});
+        btn.addEventListener('mouseleave', () => { clearTimeout(timer); });
+        btn.addEventListener('touchstart', e => { e.preventDefault(); timer = setTimeout(() => { userInput.value += alt; timer = null; }, 500); }, { passive: false });
+        btn.addEventListener('touchend', e => { e.preventDefault(); if (timer) { clearTimeout(timer); userInput.value += main; }});
+        kbC.appendChild(btn);
+      });
+    })();
   </script>
 </body>
 </html>
