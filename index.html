@@ -202,8 +202,37 @@
     const apiContainer = document.getElementById('api-container');
     const pasteBtn = document.getElementById('paste-btn');
     const clearBtn = document.getElementById('clear-btn');
+    const resetBtn = document.getElementById('reset-btn');
 
-    let history = [];
+    // Open IndexedDB
+    const dbPromise = indexedDB.open('chatbotDB', 1);
+
+    dbPromise.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      db.createObjectStore('messages', { autoIncrement: true });
+    };
+
+    dbPromise.onerror = function(event) {
+      showError('Error opening database: ' + event.target.error);
+    };
+
+    dbPromise.onsuccess = function(event) {
+      const db = event.target.result;
+      const transaction = db.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const request = store.getAll();
+
+      request.onsuccess = function() {
+        const messages = request.result;
+        messages.forEach(msg => {
+          display(msg.text, msg.sender);
+        });
+      };
+
+      request.onerror = function(event) {
+        showError('Error loading messages: ' + event.target.error);
+      };
+    };
 
     function display(msg, cls) {
       const d = document.createElement('div');
@@ -212,6 +241,7 @@
       chatContainer.appendChild(d);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
+
     function showError(e) { errorBox.style.display = 'block'; errorBox.textContent = e; }
     function hideError() { errorBox.style.display = 'none'; }
     function clearApiKey() { apiKeyInput.value = ''; localStorage.removeItem('chatbot-api-key'); }
@@ -222,7 +252,13 @@
       const txt = userInput.value.trim(); if (!txt) return;
       const key = apiKeyInput.value.trim();
       if (!key) { showError('Masukkan API Key terlebih dahulu.'); return; }
-      saveApiKey(key); display(txt, 'user'); history.push({ text: txt, sender: 'user' }); userInput.value = '';
+      saveApiKey(key); display(txt, 'user');
+      dbPromise.then(db => {
+        const transaction = db.transaction('messages', 'readwrite');
+        const store = transaction.objectStore('messages');
+        store.add({ text: txt, sender: 'user' });
+      });
+      userInput.value = '';
       try {
         const res = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
@@ -232,7 +268,12 @@
         if (!res.ok) throw new Error(res.status + ' ' + res.statusText);
         const data = await res.json();
         const reply = data.candidates?.[0]?.content || 'Tidak ada respons.';
-        display(reply, 'bot'); history.push({ text: reply, sender: 'bot' });
+        display(reply, 'bot');
+        dbPromise.then(db => {
+          const transaction = db.transaction('messages', 'readwrite');
+          const store = transaction.objectStore('messages');
+          store.add({ text: reply, sender: 'bot' });
+        });
       } catch (err) { showError('Error: ' + err.message); }
     });
 
@@ -240,6 +281,16 @@
     pasteBtn.onclick = async () => { try { const text = await navigator.clipboard.readText(); apiKeyInput.value = text; saveApiKey(text); } catch { showError('Clipboard gagal dibaca'); }};
     clearBtn.onclick = clearApiKey;
     apiKeyInput.value = localStorage.getItem('chatbot-api-key') || '';
+
+    resetBtn.onclick = function() {
+      dbPromise.then(db => {
+        const transaction = db.transaction('messages', 'readwrite');
+        const store = transaction.objectStore('messages');
+        store.clear();
+        chatContainer.innerHTML = '';
+        hideError();
+      });
+    };
 
     /* Virtual Keyboard Logic */
     (function() {
