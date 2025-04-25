@@ -102,6 +102,7 @@
       --key-h: 3rem;
       --char-font: clamp(.7rem, 1.2vw, 1rem);
       --special-key-font: clamp(.8rem, 1.5vw, 1.1rem);
+      --scrollbar-width: 100px; /* Variable to adjust scrollbar width manually */
     }
 
     #keyboard-container {
@@ -136,7 +137,21 @@
       grid-template-columns: repeat(2, var(--key-w));
       grid-auto-rows: var(--key-h);
       gap: .2rem;
-      overflow: auto;
+      overflow-y: auto; /* Ensures vertical scrollbar appears when needed */
+      overflow-x: hidden; /* Prevents horizontal scrolling */
+    }
+    #keyboard::-webkit-scrollbar {
+      width: var(--scrollbar-width); /* Custom scrollbar width using variable */
+    }
+    #keyboard::-webkit-scrollbar-button {
+      display: none; /* Removes scroll arrows */
+    }
+    #keyboard::-webkit-scrollbar-thumb {
+      background: #888; /* Scroll thumb color */
+      border-radius: 5px; /* Rounded thumb for better appearance */
+    }
+    #keyboard::-webkit-scrollbar-track {
+      background: #f1f1f1; /* Track color */
     }
     button.key {
       width: var(--key-w);
@@ -230,43 +245,43 @@
     (function() {
       const specialKeys = ['backspace','space','enter'];
       const pairs = [
-    ['a', ':'],
-    ['b', ']'],
-    ['c', '['],
-    ['d', ';'],
-    ['e', '='],
-    ['f', '`'],
-    ['g', '"'],
-    ['h', '~'],
-    ['i', '|'],
-    ['j', '<'],
-    ['k', "'"],
-    ['l', '>'],
-    ['m', '{'],
-    ['n', '°'],
-    ['o', '/'],
-    ['p', '≈'],
-    ['q', '-'],
-    ['r', 'π'],
-    ['s', '≠'],
-    ['t', '+'],
-    ['u', '_'],
-    ['v', '∞'],
-    ['w', '}'],
-    ['x', '÷'],
-    ['y', '√']
-    ['z', '?'],
-    ['0', ')'],
-    ['1', '!'],
-    ['2', '^'],
-    ['3', '@'],
-    ['4', '&'],
-    ['5', '#'],
-    ['6', '*'],
-    ['7', '$'],
-    ['8', '('],
-    ['9', '%']
-];
+        ['a', ':'],
+        ['b', ']'],
+        ['c', '['],
+        ['d', ';'],
+        ['e', '='],
+        ['f', '`'],
+        ['g', '"'],
+        ['h', '~'],
+        ['i', '|'],
+        ['j', '<'],
+        ['k', "'"],
+        ['l', '>'],
+        ['m', '{'],
+        ['n', '°'],
+        ['o', '/'],
+        ['p', '≈'],
+        ['q', '-'],
+        ['r', 'π'],
+        ['s', '≠'],
+        ['t', '+'],
+        ['u', '_'],
+        ['v', '∞'],
+        ['w', '}'],
+        ['x', '÷'],
+        ['y', '√'],
+        ['z', '?'],
+        ['0', ')'],
+        ['1', '!'],
+        ['2', '^'],
+        ['3', '@'],
+        ['4', '&'],
+        ['5', '#'],
+        ['6', '*'],
+        ['7', '$'],
+        ['8', '('],
+        ['9', '%']
+      ];
       const specC = document.getElementById('special-keys');
       const kbC = document.getElementById('keyboard');
 
