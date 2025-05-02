@@ -26,12 +26,11 @@
     #controls button { background: none; border: none; font-size: 1rem; }
 
     #api-container {
-      display: none; /* Initially hidden */
+      display: none;
       padding: .5rem;
       background: #fafafa;
       border-bottom: 1px solid #ececec;
       flex-shrink: 0;
-      align-items: center; /* Align items vertically */
     }
     #api-container input {
       flex: 1;
@@ -48,7 +47,6 @@
       border-radius: 4px;
       background: #eee;
       margin-left: .25rem;
-      white-space: nowrap; /* Prevent buttons from wrapping */
     }
 
     #content-wrap {
@@ -68,20 +66,15 @@
       flex: 1;
       padding: .5rem;
       overflow-y: auto;
-      scroll-behavior: smooth; /* Add smooth scrolling */
     }
-    .message { margin-bottom: .5rem; line-height: 1.4; max-width: 90%; word-wrap: break-word; }
-    .user { margin-left: auto; text-align: right; color: #0066cc; background-color: #e6f2ff; padding: 8px 12px; border-radius: 10px 10px 0 10px;}
-    .bot  { margin-right: auto; text-align: left;  color: #333; background-color: #f0f0f0; padding: 8px 12px; border-radius: 10px 10px 10px 0;}
+    .message { margin-bottom: .5rem; line-height: 1.4; }
+    .user { text-align: right; color: #0066cc; }
+    .bot  { text-align: left;  color: #333; }
 
     #error-box {
-      display: none; /* Initially hidden */
-      color: #d9534f; /* Red color for errors */
-      background-color: #f2dede; /* Light red background */
-      border: 1px solid #ebccd1; /* Reddish border */
+      display: none;
+      color: #d9534f;
       padding: .5rem;
-      margin: .5rem; /* Add margin */
-      border-radius: 4px; /* Rounded corners */
       flex-shrink: 0;
       border-top: 1px solid #ececec;
     }
@@ -95,12 +88,12 @@
     }
     #input-form input {
       flex: 1;
-      padding: .25rem .5rem; /* Adjust padding */
+      padding: .25rem;
       font-size: .9rem;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    #input-form button[type="submit"] { display: none; } /* Hide the actual submit button */
+    #input-form button[type="submit"] { display: none; }
 
     /* ===== Keyboard Config Vars ===== */
     :root {
@@ -115,44 +108,29 @@
     #keyboard-container {
       display: flex;
       flex-direction: row;
-      /* Adjust width based on viewport height for better aspect ratio */
-      /* Let's try a fixed width or a max-width instead */
-      width: 150px; /* Fixed width */
+      width: 33.333vh;
       max-width: 160px;
       background: #f9f9f9;
       flex-shrink: 0;
-      border-left: 1px solid #ececec; /* Add border */
-      height: 100%; /* Ensure it takes full height of the parent */
-      box-sizing: border-box; /* Include padding/border in width */
     }
 
     #special-keys {
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* Distribute space */
+      justify-content: space-between;
       align-items: center;
-      width: 40px; /* Fixed width for special keys */
-      flex-shrink: 0;
-      height: 100%; /* Full height */
-      padding: .2rem 0; /* Add some vertical padding */
-      box-sizing: border-box;
+      flex: 1;
+      height: 100%;
     }
     #special-keys button.key {
-      flex: 1; /* Allow buttons to grow/shrink */
-      max-height: calc((100% - .4rem * 2) / 3); /* Divide height among 3 buttons accounting for gap */
+      flex: 1;
       writing-mode: vertical-rl;
       text-orientation: mixed;
       font-size: var(--special-key-font);
       border: 1px solid #ccc;
       background: white;
       width: 100%;
-      margin-bottom: .2rem; /* Add gap */
-      box-sizing: border-box;
     }
-     #special-keys button.key:last-child {
-        margin-bottom: 0; /* No gap after last button */
-     }
-
 
     #keyboard {
       display: grid;
@@ -161,12 +139,7 @@
       gap: .2rem;
       overflow-y: auto; /* Ensures vertical scrollbar appears when needed */
       overflow-x: hidden; /* Prevents horizontal scrolling */
-      padding: .2rem; /* Add padding around keys */
-      flex-grow: 1; /* Allow keyboard grid to take remaining space */
-      height: 100%; /* Ensure full height */
-      box-sizing: border-box; /* Include padding */
     }
-    /* Keep the scrollbar styles */
     #keyboard::-webkit-scrollbar {
       width: var(--scrollbar-width); /* Custom scrollbar width using variable */
     }
@@ -180,7 +153,6 @@
     #keyboard::-webkit-scrollbar-track {
       background: #f1f1f1; /* Track color */
     }
-
     button.key {
       width: var(--key-w);
       height: var(--key-h);
@@ -190,26 +162,18 @@
       justify-content: center;
       border: 1px solid #ccc;
       background: white;
-      user-select: none; /* Prevent text selection */
-      touch-action: manipulation; /* Improve touch responsiveness */
-      padding: 0; /* Remove default padding */
-      box-sizing: border-box;
-      line-height: 1.1; /* Adjust line height for multi-char keys */
-      text-align: center; /* Center text */
-      white-space: pre; /* Preserve spaces in button text */
+      user-select: none;
+      touch-action: manipulation;
     }
-     button.key:active {
-        background-color: #eee; /* Visual feedback on press */
-     }
   </style>
 </head>
 <body>
   <div id="controls">
     <button id="toggle-api-btn">API</button>
-    <button id="reset-btn">Reset Percakapan</button>
+    <button id="reset-btn">Reset</button>
   </div>
   <div id="api-container">
-    <input type="text" id="api-key" placeholder="API Key Google AI" />
+    <input type="text" id="api-key" placeholder="API Key" />
     <button id="paste-btn">Paste</button>
     <button id="clear-btn">Clear</button>
   </div>
@@ -219,7 +183,7 @@
       <div id="error-box"></div>
       <form id="input-form">
         <input type="text" id="user-input" placeholder="Tulis pesan..." autocomplete="off" required />
-        <button type="submit"></button> <!-- Hidden but needed for form submission -->
+        <button type="submit"></button>
       </form>
     </div>
     <div id="keyboard-container">
@@ -227,9 +191,8 @@
       <div id="keyboard"></div>
     </div>
   </div>
-
   <script>
-    /* DOM Elements */
+    /* Chatbot Logic */
     const chatContainer = document.getElementById('chat-container');
     const inputForm = document.getElementById('input-form');
     const userInput = document.getElementById('user-input');
@@ -240,383 +203,198 @@
     const pasteBtn = document.getElementById('paste-btn');
     const clearBtn = document.getElementById('clear-btn');
     const resetBtn = document.getElementById('reset-btn');
-    const specialKeysContainer = document.getElementById('special-keys');
-    const keyboardGridContainer = document.getElementById('keyboard');
 
-    const DB_NAME = 'chatbotDB';
-    const STORE_NAME = 'messages';
-    const API_KEY_STORAGE = 'chatbot-api-key';
+    let db = null; // Variable to hold the database connection
 
-    /* --- IndexedDB Initialization --- */
-    let db; // Variable to hold the DB connection
-    const dbPromise = new Promise((resolve, reject) => {
-        const request = indexedDB.open(DB_NAME, 1);
+    // Open IndexedDB
+    const dbOpenRequest = indexedDB.open('chatbotDB', 1);
 
-        request.onupgradeneeded = function(event) {
-            const dbInstance = event.target.result;
-            if (!dbInstance.objectStoreNames.contains(STORE_NAME)) {
-                dbInstance.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
-                console.log(`Object store "${STORE_NAME}" created.`);
-            }
-        };
+    dbOpenRequest.onupgradeneeded = function(event) {
+      const database = event.target.result;
+      if (!database.objectStoreNames.contains('messages')) {
+        database.createObjectStore('messages', { autoIncrement: true });
+      }
+    };
 
-        request.onerror = function(event) {
-            console.error('Database error:', event.target.error);
-            showError('Error opening database: ' + event.target.error);
-            reject('Error opening database: ' + event.target.error);
-        };
+    dbOpenRequest.onerror = function(event) {
+      showError('Error opening database: ' + event.target.error);
+    };
 
-        request.onsuccess = function(event) {
-            db = event.target.result; // Assign db connection
-            console.log('Database opened successfully.');
-            loadChatHistory(); // Load history once DB is ready
-            resolve(db);
-        };
-    });
+    dbOpenRequest.onsuccess = function(event) {
+      db = event.target.result; // Assign the opened database to the variable
+      const transaction = db.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const request = store.getAll();
 
-    /* --- Helper Functions --- */
-    function displayMessage(text, senderClass) {
-      const messageDiv = document.createElement('div');
-      messageDiv.className = `message ${senderClass}`;
-      // Sanitize text slightly before displaying (basic protection)
-      messageDiv.textContent = text;
-      chatContainer.appendChild(messageDiv);
-      // Scroll to the bottom
+      request.onsuccess = function() {
+        const messages = request.result;
+        messages.forEach(msg => {
+          display(msg.text, msg.sender);
+        });
+      };
+
+      request.onerror = function(event) {
+        showError('Error loading messages: ' + event.target.error);
+      };
+    };
+
+    function display(msg, cls) {
+      const d = document.createElement('div');
+      d.className = 'message ' + cls;
+      d.textContent = msg;
+      chatContainer.appendChild(d);
       chatContainer.scrollTop = chatContainer.scrollHeight;
     }
 
-    function showError(errorMessage) {
-        errorBox.textContent = errorMessage;
-        errorBox.style.display = 'block';
-        console.error("Error Displayed:", errorMessage);
-    }
+    function showError(e) { errorBox.style.display = 'block'; errorBox.textContent = e; }
+    function hideError() { errorBox.style.display = 'none'; }
+    function clearApiKey() { apiKeyInput.value = ''; localStorage.removeItem('chatbot-api-key'); }
+    function saveApiKey(key) { localStorage.setItem('chatbot-api-key', key); }
 
-    function hideError() {
-        errorBox.textContent = '';
-        errorBox.style.display = 'none';
-    }
+    inputForm.addEventListener('submit', async e => {
+      e.preventDefault(); hideError();
+      const txt = userInput.value.trim(); if (!txt) return;
+      const key = apiKeyInput.value.trim();
+      if (!key) { showError('Masukkan API Key terlebih dahulu.'); return; }
+      saveApiKey(key); display(txt, 'user');
 
-    function clearApiKey() {
-        apiKeyInput.value = '';
-        localStorage.removeItem(API_KEY_STORAGE);
-        console.log('API Key cleared.');
-    }
-
-    function saveApiKey(key) {
-        localStorage.setItem(API_KEY_STORAGE, key);
-        console.log('API Key saved.');
-    }
-
-    /* --- IndexedDB Operations --- */
-    async function saveMessageToDB(text, sender) {
-        if (!db) {
-            showError("Database not initialized yet.");
-            return;
-        }
-        try {
-            const transaction = db.transaction(STORE_NAME, 'readwrite');
-            const store = transaction.objectStore(STORE_NAME);
-            const message = { text, sender, timestamp: new Date() };
-            const request = store.add(message);
-
-            await new Promise((resolve, reject) => {
-                request.onsuccess = () => {
-                    console.log(`Message from ${sender} saved to DB.`);
-                    resolve();
-                };
-                request.onerror = (event) => {
-                    console.error('Error saving message to DB:', event.target.error);
-                    showError('Error saving message: ' + event.target.error);
-                    reject(event.target.error);
-                };
-            });
-        } catch (err) {
-             console.error('Transaction error saving message:', err);
-             showError('Failed to save message transactionally.');
-        }
-    }
-
-    async function loadChatHistory() {
-        if (!db) {
-            console.warn("Attempted to load history, but DB not ready.");
-            // Wait for dbPromise if needed, or rely on initial onsuccess call
-             await dbPromise; // Ensure DB is ready before proceeding
-             if (!db) {
-                 showError("Database initialization failed permanently.");
-                 return;
-             }
-        }
-        try {
-            const transaction = db.transaction(STORE_NAME, 'readonly');
-            const store = transaction.objectStore(STORE_NAME);
-            const request = store.getAll();
-
-            request.onsuccess = function() {
-                const messages = request.result;
-                chatContainer.innerHTML = ''; // Clear existing display first
-                console.log(`Loading ${messages.length} messages from DB.`);
-                messages.forEach(msg => {
-                    displayMessage(msg.text, msg.sender); // 'user' or 'bot'
-                });
-                 // Ensure scroll to bottom after loading history
-                 chatContainer.scrollTop = chatContainer.scrollHeight;
-            };
-
-            request.onerror = function(event) {
-                console.error('Error loading messages from DB:', event.target.error);
-                showError('Error loading chat history: ' + event.target.error);
-            };
-        } catch (err) {
-            console.error('Transaction error loading history:', err);
-            showError('Failed to load history transactionally.');
-        }
-    }
-
-     async function clearChatHistory() {
-         if (!db) {
-             showError("Database not initialized yet.");
-             return;
-         }
-         try {
-             const transaction = db.transaction(STORE_NAME, 'readwrite');
-             const store = transaction.objectStore(STORE_NAME);
-             const request = store.clear(); // Clear all records
-
-             await new Promise((resolve, reject) => {
-                 request.onsuccess = () => {
-                     console.log('Chat history cleared from DB.');
-                     chatContainer.innerHTML = ''; // Clear the chat display
-                     hideError();
-                     resolve();
-                 };
-                 request.onerror = (event) => {
-                     console.error('Error clearing database:', event.target.error);
-                     showError('Error clearing chat history: ' + event.target.error);
-                     reject(event.target.error);
-                 };
-             });
-         } catch (err) {
-              console.error('Transaction error clearing history:', err);
-              showError('Failed to clear history transactionally.');
-         }
-     }
-
-
-    /* --- Event Listeners --- */
-
-    // Handle form submission (Enter key or virtual Enter button)
-    inputForm.addEventListener('submit', async (event) => {
-      event.preventDefault(); // Prevent default page reload
-      hideError(); // Clear previous errors
-
-      const userText = userInput.value.trim();
-      const apiKey = apiKeyInput.value.trim();
-
-      // Basic validation
-      if (!userText) {
-        // Optionally show a message or just do nothing
-        console.log("Empty input, submission ignored.");
-        return;
-      }
-      if (!apiKey) {
-        showError('Silakan masukkan API Key Google AI Anda di bagian API.');
-        // Optionally toggle the API section visibility
-        if (apiContainer.style.display === 'none') {
-            apiContainer.style.display = 'flex';
-        }
-        apiKeyInput.focus(); // Focus the API key input
-        return;
+      // Save user message to IndexedDB only if db is open
+      if (db) {
+        const transaction = db.transaction('messages', 'readwrite');
+        const store = transaction.objectStore('messages');
+        store.add({ text: txt, sender: 'user' }).onerror = (event) => {
+           console.error('Error saving user message:', event.target.error);
+           showError('Error saving user message: ' + event.target.error);
+        };
+      } else {
+        console.warn('Database not yet open, user message not saved.');
       }
 
-      // Display user message and save it
-      displayMessage(userText, 'user');
-      await saveMessageToDB(userText, 'user'); // Wait for save to complete
+      userInput.value = ''; // Clear input after sending
 
-      // Clear the input field *after* processing the user's message
-      userInput.value = '';
-
-      // Send to AI API
       try {
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
-        // Note: Changed model to gemini-flash as gemini-2.0-flash might not exist or require specific access. Adjust if needed.
-        // If you specifically need gemini-2.0-flash use:
-        // const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(apiKey)}`;
-
-        console.log("Sending to API:", apiUrl);
-        console.log("Request Body:", JSON.stringify({ contents: [{ parts: [{ text: userText }] }] }));
-
-        const response = await fetch(apiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: userText }] }]
-          })
-        });
-
-        console.log("API Response Status:", response.status, response.statusText);
-
-        if (!response.ok) {
-          // Try to get more detailed error from response body
-          let errorData;
-          try {
-             errorData = await response.json();
-             console.error("API Error Response Body:", errorData);
-          } catch (e) {
-             // Ignore if response body is not JSON or empty
-             console.error("Could not parse error response body:", e);
-          }
-          const errorDetail = errorData?.error?.message || response.statusText;
-          throw new Error(`API Error: ${response.status} ${errorDetail}`);
+        const res = await fetch(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${encodeURIComponent(key)}`,
+          { method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ contents: [{ parts: [{ text: txt }] }] }) }
+        );
+        if (!res.ok) {
+            const errorData = await res.json();
+            throw new Error(`${res.status} ${res.statusText}: ${errorData.error?.message || 'Unknown error'}`);
         }
+        const data = await res.json();
+        // Safely access the bot response text
+        const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Tidak ada respons.';
+        display(reply, 'bot');
 
-        const data = await response.json();
-        console.log("API Response Data:", data);
-
-        // Extract the response text - check structure carefully based on actual API response
-        const botReply = data?.candidates?.[0]?.content?.parts?.[0]?.text || 'Maaf, saya tidak mengerti atau tidak dapat merespons.';
-
-        // Display bot message and save it
-        displayMessage(botReply, 'bot');
-        await saveMessageToDB(botReply, 'bot'); // Wait for save
-
-      } catch (error) {
-        console.error('Error during API call:', error);
-        showError(`Gagal menghubungi AI: ${error.message}`);
-        // Optionally display a generic bot error message in chat
-        // displayMessage("Maaf, terjadi kesalahan saat memproses permintaan Anda.", 'bot');
-        // await saveMessageToDB("Maaf, terjadi kesalahan saat memproses permintaan Anda.", 'bot');
-      }
-    });
-
-    // Toggle API Key section visibility
-    toggleApiBtn.addEventListener('click', () => {
-      const isHidden = apiContainer.style.display === 'none' || apiContainer.style.display === '';
-      apiContainer.style.display = isHidden ? 'flex' : 'none';
-      console.log("API container toggled:", isHidden ? "Shown" : "Hidden");
-    });
-
-    // Paste API Key from clipboard
-    pasteBtn.addEventListener('click', async () => {
-      try {
-        const text = await navigator.clipboard.readText();
-        apiKeyInput.value = text;
-        saveApiKey(text); // Also save it to localStorage
-        console.log("API Key pasted from clipboard.");
-      } catch (err) {
-        showError('Gagal membaca dari clipboard. Pastikan izin diberikan.');
-        console.error('Clipboard read error:', err);
-      }
-    });
-
-    // Clear API Key input and localStorage
-    clearBtn.addEventListener('click', clearApiKey);
-
-    // Reset chat history
-    resetBtn.addEventListener('click', () => {
-        if (confirm("Apakah Anda yakin ingin menghapus semua riwayat percakapan?")) {
-           console.log("Resetting chat history...");
-           clearChatHistory();
+        // Save bot message to IndexedDB only if db is open
+        if (db) {
+          const transaction = db.transaction('messages', 'readwrite');
+          const store = transaction.objectStore('messages');
+          store.add({ text: reply, sender: 'bot' }).onerror = (event) => {
+            console.error('Error saving bot message:', event.target.error);
+            showError('Error saving bot message: ' + event.target.error);
+          };
         } else {
-           console.log("Chat reset cancelled.");
+           console.warn('Database not yet open, bot message not saved.');
         }
+
+      } catch (err) { showError('Error: ' + err.message); }
     });
 
-    // Load saved API Key on startup
-    apiKeyInput.value = localStorage.getItem(API_KEY_STORAGE) || '';
-    if(apiKeyInput.value) {
-        console.log("Loaded API Key from storage.");
-    }
+    toggleApiBtn.onclick = () => { apiContainer.style.display = apiContainer.style.display === 'flex' ? 'none' : 'flex'; };
+    pasteBtn.onclick = async () => { try { const text = await navigator.clipboard.readText(); apiKeyInput.value = text; saveApiKey(text); } catch { showError('Clipboard gagal dibaca'); }};
+    clearBtn.onclick = clearApiKey;
+    apiKeyInput.value = localStorage.getItem('chatbot-api-key') || '';
 
-    /* --- Virtual Keyboard Logic --- */
+    resetBtn.onclick = function() {
+      if (db) {
+        const transaction = db.transaction('messages', 'readwrite');
+        const store = transaction.objectStore('messages');
+        const clearRequest = store.clear();
+        clearRequest.onsuccess = function() {
+           chatContainer.innerHTML = '';
+           hideError();
+           console.log('IndexedDB messages cleared.');
+        };
+        clearRequest.onerror = function(event) {
+           console.error('Error clearing IndexedDB:', event.target.error);
+           showError('Error clearing history: ' + event.target.error);
+        };
+      } else {
+         console.warn('Database not yet open, cannot clear messages.');
+         showError('Database not ready to clear history.');
+      }
+    };
+
+
+    /* Virtual Keyboard Logic */
     (function() {
-      // Define keys: main character, alternative character (long press)
-      const keyPairs = [
-        ['a', ':'], ['b', ']'], ['c', '['], ['d', ';'], ['e', '='],
-        ['f', '`'], ['g', '"'], ['h', '~'], ['i', '|'], ['j', '<'],
-        ['k', "'"], ['l', '>'], ['m', '{'], ['n', '°'], ['o', '/'],
-        ['p', '≈'], ['q', '-'], ['r', 'π'], ['s', '≠'], ['t', '+'],
-        ['u', '_'], ['v', '∞'], ['w', '}'], ['x', '÷'], ['y', '√'],
-        ['z', '?'], ['0', ')'], ['1', '!'], ['2', '^'], ['3', '@'],
-        ['4', '&'], ['5', '#'], ['6', '*'], ['7', '$'], ['8', '('],
+      const specialKeys = ['backspace','space','enter'];
+      const pairs = [
+        ['a', ':'],
+        ['b', ']'],
+        ['c', '['],
+        ['d', ';'],
+        ['e', '='],
+        ['f', '`'],
+        ['g', '"'],
+        ['h', '~'],
+        ['i', '|'],
+        ['j', '<'],
+        ['k', "'"],
+        ['l', '>'],
+        ['m', '{'],
+        ['n', '°'],
+        ['o', '/'],
+        ['p', '≈'],
+        ['q', '-'],
+        ['r', 'π'],
+        ['s', '≠'],
+        ['t', '+'],
+        ['u', '_'],
+        ['v', '∞'],
+        ['w', '}'],
+        ['x', '÷'],
+        ['y', '√'],
+        ['z', '?'],
+        ['0', ')'],
+        ['1', '!'],
+        ['2', '^'],
+        ['3', '@'],
+        ['4', '&'],
+        ['5', '#'],
+        ['6', '*'],
+        ['7', '$'],
+        ['8', '('],
         ['9', '%']
       ];
+      const specC = document.getElementById('special-keys');
+      const kbC = document.getElementById('keyboard');
 
-      const specialKeyTypes = [
-          { id: 'backspace', display: 'Bksp', action: () => userInput.value = userInput.value.slice(0, -1) },
-          { id: 'space', display: 'Space', action: () => userInput.value += ' ' },
-          { id: 'enter', display: 'Enter', action: () => inputForm.requestSubmit() } // Triggers form submit event
-      ];
-
-      // Create Special Keys
-      specialKeyTypes.forEach(spec => {
-        const btn = document.createElement('button');
-        btn.className = 'key';
-        btn.id = `key-${spec.id}`;
-        btn.textContent = spec.display;
-        btn.addEventListener('click', spec.action);
-        specialKeysContainer.appendChild(btn);
+      specialKeys.forEach(type => {
+        const btn = document.createElement('button'); btn.className = 'key'; btn.id = type;
+        btn.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+        if (type === 'space') btn.dataset.main = ' ';
+        btn.addEventListener('click', () => {
+          if (type === 'backspace') userInput.value = userInput.value.slice(0, -1);
+          if (type === 'space') userInput.value += ' ';
+          if (type === 'enter') inputForm.requestSubmit(); // This triggers the form submit listener
+        }); specC.appendChild(btn);
       });
 
-      // Create Character Keys
-      keyPairs.forEach(([mainChar, altChar]) => {
-        const btn = document.createElement('button');
-        btn.className = 'key';
-        btn.textContent = `${mainChar} ${altChar}`; // Display both chars
-        btn.dataset.main = mainChar;
-        btn.dataset.alt = altChar;
-
-        let pressTimer = null;
-        let longPressTriggered = false;
-
-        const startPress = (e) => {
-            e.preventDefault(); // Prevent default actions like text selection or context menu
-            longPressTriggered = false; // Reset flag
-            // Start timer for long press
-            pressTimer = setTimeout(() => {
-                userInput.value += altChar;
-                longPressTriggered = true; // Mark long press as triggered
-                pressTimer = null; // Clear timer reference
-                 // Optionally provide haptic feedback here if possible/desired
-            }, 600); // Long press duration (milliseconds)
-        };
-
-        const endPress = (e) => {
-            e.preventDefault();
-            if (pressTimer) { // If timer is still running (short press)
-                clearTimeout(pressTimer);
-                pressTimer = null;
-                userInput.value += mainChar; // Insert main character
-            }
-            // If longPressTriggered is true, the alt char was already added by the timer
-        };
-
-        const cancelPress = () => {
-             if (pressTimer) {
-                 clearTimeout(pressTimer);
-                 pressTimer = null;
-             }
-             // Reset long press flag just in case
-             longPressTriggered = false;
-        }
-
-        // Mouse events
-        btn.addEventListener('mousedown', startPress);
-        btn.addEventListener('mouseup', endPress);
-        btn.addEventListener('mouseleave', cancelPress); // Cancel if mouse leaves button area
-
-        // Touch events
-        btn.addEventListener('touchstart', startPress, { passive: false }); // Use active listener
-        btn.addEventListener('touchend', endPress);
-        btn.addEventListener('touchcancel', cancelPress); // Cancel if touch is interrupted
-
-        keyboardGridContainer.appendChild(btn);
+      pairs.forEach(([main, alt]) => {
+        const btn = document.createElement('button'); btn.className = 'key'; btn.textContent = `${main} ${alt}`;
+        btn.dataset.main = main; btn.dataset.alt = alt;
+        let timer;
+        btn.addEventListener('mousedown', () => { timer = setTimeout(() => { userInput.value += alt; timer = null; }, 500); });
+        btn.addEventListener('mouseup', () => { if (timer) { clearTimeout(timer); userInput.value += main; }});
+        btn.addEventListener('mouseleave', () => { clearTimeout(timer); });
+        btn.addEventListener('touchstart', e => { e.preventDefault(); timer = setTimeout(() => { userInput.value += alt; timer = null; }, 500); }, { passive: false });
+        btn.addEventListener('touchend', e => { e.preventDefault(); if (timer) { clearTimeout(timer); userInput.value += main; }});
+        kbC.appendChild(btn);
       });
     })();
-
-    console.log("Chatbot UI and logic initialized.");
-
   </script>
 </body>
 </html>
